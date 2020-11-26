@@ -18,7 +18,6 @@ import cl.ucn.disc.dsm.fsalinas.news.model.News;
  *  The Contracts from CU/UH.
  *  @author Felipe Salinas-Urra.
  */
-
 public interface Contracts {
 
     /**
@@ -31,6 +30,6 @@ public interface Contracts {
     /**
      *  Save one News into the System.
      */
-
+    void saveNews(News news);
 
 }
