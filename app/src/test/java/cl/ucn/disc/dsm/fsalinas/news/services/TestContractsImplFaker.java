@@ -10,16 +10,20 @@
 
 package cl.ucn.disc.dsm.fsalinas.news.services;
 
-import com.github.javafaker.Faker;
-
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.threeten.bp.ZoneId;
+import org.threeten.bp.ZonedDateTime;
 
 import java.util.List;
 
 import cl.ucn.disc.dsm.fsalinas.news.model.News;
+
+//import org.junit.platform.commons.util.ToStringBuilder;
 
 
 /**
@@ -52,14 +56,14 @@ public final class TestContractsImplFaker {
         Assertions.assertNotNull(news, "List was null :(");
 
         // The list can't be empty
-        Assertions.assertTrue(news.size() != 0, "Empty list? :(");
+        Assertions.assertFalse(news.isEmpty(), "Empty list? :(");
 
         // The size(list) = 5
-        Assertions.assertTrue(news.size() == 5, "List size != 5 :(");
+        Assertions.assertEquals(5,news.size(), "List size != 5 :(");
 
         // debug to log
         for (News n : news){
-            log.debug("News: {}", n);
+            log.debug("News: {}", ToStringBuilder.reflectionToString(n, ToStringStyle.MULTI_LINE_STYLE));
         }
 
         // Size = 0
@@ -73,22 +77,49 @@ public final class TestContractsImplFaker {
 
         log.debug("Done.");
 
-
-
     }
 
+    /**
+     *  The Test of Save News.
+     */
     @Test
-    public void testFaker(){
+    public void testSaveNews(){
 
-        // Build the Faker
-        Faker faker = Faker.instance();
+        log.debug("Testing...");
 
-        for (int i = 0; i < 5; i++){
-            log.debug("Name: {}" , faker.name().fullName());
-            //FIXME: Remover
-            System.out.println("Name: " + faker.name().fullName());
-        }
+        // The concrete implementation
+        Contracts contracts = new ContractsImplFaker();
+
+        // Nullity
+        Assertions.assertThrows(IllegalArgumentException.class, () -> contracts.saveNews(null));
+
+        int size = contracts.retrieveNews(1000).size();
+        log.debug("Size: {}.", size);
+
+        // Saving ok?
+        News news = new News(
+                "The Title",
+                "The Source",
+                "The Author",
+                null,
+                null,
+                "The Description",
+                "The Content",
+                ZonedDateTime.now(ZoneId.of("-3")));
+        contracts.saveNews(news);
+
+        // One more time
+        int newSize = contracts.retrieveNews(1000).size();
+        Assertions.assertEquals(size + 1, newSize, "Wrong size");
+
+        // Save duplicated
+        Assertions.assertThrows(IllegalArgumentException.class, () -> contracts.saveNews(news));
+
+        log.debug("..Done.");
+
+        
     }
+
 
 }
 
