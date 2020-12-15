@@ -19,9 +19,12 @@
 
 package cl.ucn.disc.dsm.fsalinas.news;
 
-import androidx.appcompat.app.AppCompatActivity;
+        import android.os.Bundle;
+        import android.view.Menu;
+        import android.view.MenuItem;
 
-import android.os.Bundle;
+        import androidx.appcompat.app.AppCompatActivity;
+        import androidx.appcompat.app.AppCompatDelegate;
 
         /**
          *  The Main Class.
@@ -31,13 +34,53 @@ import android.os.Bundle;
 public class MainActivity extends AppCompatActivity {
 
             /**
-             * OnCreate.
-             * @param savedInstanceState used to reload the app.
+             * Creates the night mode menu option.
+             *
+             * @param menu The menu in the action bar
+             * @return True to display the menu, false to hide it
              */
+            @Override
+            public boolean onCreateOptionsMenu(Menu menu) {
+                getMenuInflater().inflate(R.menu.main_menu, menu);
+                // Change the label of the menu based on the state of the app.
+                int nightMode = AppCompatDelegate.getDefaultNightMode();
+                if(nightMode == AppCompatDelegate.MODE_NIGHT_YES){
+                    menu.findItem(R.id.night_mode).setTitle(R.string.day_mode);
+                } else{
+                    menu.findItem(R.id.night_mode).setTitle(R.string.night_mode);
+                }
+                return true;
+            }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-    }
+            /**
+             * Handles options menu item clicks.
+             *
+             * @param item The item that was pressed
+             * @return returns true since the item click wa handled
+             */
+            @Override
+            public boolean onOptionsItemSelected(MenuItem item) {
+                // Check if the correct item was clicked.
+                if (item.getItemId() == R.id.night_mode) {
+                    // Get the night mode state of the app.
+                    int nightMode = AppCompatDelegate.getDefaultNightMode();
+                    // Set the theme mode for the restarted activity.
+                    if (nightMode == AppCompatDelegate.MODE_NIGHT_YES) {
+                        AppCompatDelegate.setDefaultNightMode
+                                (AppCompatDelegate.MODE_NIGHT_NO);
+                    } else {
+                        AppCompatDelegate.setDefaultNightMode
+                                (AppCompatDelegate.MODE_NIGHT_YES);
+                    }
+                    // Recreate the activity for the theme change to take effect.
+                    recreate();
+                }
+                return true;
+            }
+
+            @Override
+            protected void onCreate(Bundle savedInstanceState) {
+                super.onCreate(savedInstanceState);
+                setContentView(R.layout.activity_main);
+            }
 }
